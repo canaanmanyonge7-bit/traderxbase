@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TraderXBase</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#07111f;color:#fff}
+header{padding:22px 18px;text-align:center;border-bottom:1px solid #1d3048}
+.logo{font-size:28px;font-weight:800;letter-spacing:.5px}.logo span{color:#19d38a}
+.container{max-width:430px;margin:40px auto;padding:20px}
+.card{background:#0d1b2d;border:1px solid #203650;border-radius:18px;padding:25px;box-shadow:0 15px 40px #0005}
+h1{margin:0 0 8px;font-size:27px}p{color:#9db0c7;line-height:1.5}
+label{display:block;margin:18px 0 7px;color:#c9d5e3;font-size:14px}
+input{width:100%;padding:14px;border-radius:10px;border:1px solid #2b425e;background:#081525;color:#fff;font-size:16px;outline:none}
+button{width:100%;padding:14px;margin-top:20px;border:0;border-radius:10px;background:#19d38a;color:#03130d;font-weight:800;font-size:16px}
+.links{text-align:center;margin-top:18px;font-size:14px;color:#9db0c7}
+a{color:#19d38a;text-decoration:none}
+.badge{display:inline-block;margin-top:8px;padding:6px 10px;border-radius:20px;background:#102b35;color:#19d38a;font-size:12px}
+footer{text-align:center;color:#637991;font-size:12px;padding:25px}
+</style>
+</head>
+<body>
+<header><div class="logo">Trader<span>X</span>Base</div><div class="badge">Secure Trading Platform</div></header>
+<main class="container">
+<div class="card">
+<h1>Create your account</h1>
+<p>Your personal trading workspace. Connect your trading account later and control your bots from one secure dashboard.</p>
+<form onsubmit="event.preventDefault(); alert('Prototype only — secure account registration will be connected in the next build.');">
+<label>Full name</label>
+<input required placeholder="Your full name">
+<label>Email address</label>
+<input required type="email" placeholder="you@example.com">
+<label>Password</label>
+<input required type="password" minlength="8" placeholder="At least 8 characters">
+<label>Confirm password</label>
+<input required type="password" minlength="8" placeholder="Repeat your password">
+<button>Create account</button>
+</form>
+<div class="links">Already have an account? <a href="#">Log in</a></div>
+</div>
+</main>
+<footer>© 2026 TraderXBase · Demo prototype</footer>
+</body>
+</html>
