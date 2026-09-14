@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TraderXBase</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #0b1220;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 92%;
+      max-width: 420px;
+      background: #111b2e;
+      padding: 28px;
+      border-radius: 18px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.4);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #9ca9bd;
+      margin-bottom: 25px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 8px 0;
+      border: 1px solid #34425b;
+      border-radius: 10px;
+      background: #0b1220;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      background: #16a34a;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    button.secondary {
+      background: #26344d;
+    }
+
+    #message {
+      text-align: center;
+      margin-top: 15px;
+      color: #facc15;
+    }
+
+    #dashboard {
+      display: none;
+      text-align: center;
+    }
+
+    .logout {
+      background: #dc2626;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div id="auth">
+
+      <h1>TraderXBase</h1>
+      <p class="subtitle">Your Trading Base</p>
+
+      <input
+        type="email"
+        id="email"
+        placeholder="Email address"
+      >
+
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+      >
+
+      <button onclick="signUp()">Create Account</button>
+
+      <button class="secondary" onclick="signIn()">
+        Login
+      </button>
+
+      <p id="message"></p>
+
+    </div>
+
+    <div id="dashboard">
+
+      <h1>Welcome to TraderXBase</h1>
+
+      <p id="userEmail"></p>
+
+      <p>You are successfully logged in.</p>
+
+      <button class="logout" onclick="signOut()">
+        Logout
+      </button>
+
+    </div>
+
+  </div>
+
+<script>
+
+  // ==============================
+  // SUPABASE CONNECTION
+  // ==============================
+
+  const SUPABASE_URL = "https://niiuquwoulqjncziayir.supabase.co/rest/v1/";
+
+  const SUPABASE_KEY = "sb_publishable_U_Mx6TQe-fKkfuqgGcYJKA_tWQUb1so";
+
+  const { createClient } =
+    supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+
+  // ==============================
+  // CREATE ACCOUNT
+  // ==============================
+
+  async function signUp() {
+
+    const email =
+      document.getElementById("email").value;
+
+    const password =
+      document.getElementById("password").value;
+
+    const message =
+      document.getElementById("message");
+
+    if (!email || !password) {
+      message.textContent =
+        "Enter your email and password.";
+      return;
+    }
+
+    const { data, error } =
+      await supabase.auth.signUp({
+        email: email,
+        password: password
+      });
+
+    if (error) {
+      message.textContent = error.message;
+      return;
+    }
+
+    message.textContent =
+      "Account created. Check your email if verification is required.";
+  }
+
+
+  // ==============================
+  // LOGIN
+  // ==============================
+
+  async function signIn() {
+
+    const email =
+      document.getElementById("email").value;
+
+    const password =
+      document.getElementById("password").value;
+
+    const message =
+      document.getElementById("message");
+
+    if (!email || !password) {
+      message.textContent =
+        "Enter your email and password.";
+      return;
+    }
+
+    const { data, error } =
+      await supabase.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+    if (error) {
+      message.textContent = error.message;
+      return;
+    }
+
+    showDashboard(data.user);
+  }
+
+
+  // ==============================
+  // SHOW DASHBOARD
+  // ==============================
+
+  function showDashboard(user
