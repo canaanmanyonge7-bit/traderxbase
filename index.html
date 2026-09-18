@@ -1,189 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TraderXBase</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TraderXBase</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b1220;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    .box {
-      width: 90%;
-      max-width: 400px;
-      background: #111b2e;
-      padding: 25px;
-      border-radius: 15px;
-    }
-
-    h1 {
-      text-align: center;
-    }
-
-    input, button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 12px;
-      border-radius: 8px;
-      box-sizing: border-box;
-    }
-
-    input {
-      background: #0b1220;
-      color: white;
-      border: 1px solid #34425b;
-    }
-
-    button {
-      border: none;
-      background: #16a34a;
-      color: white;
-      font-weight: bold;
-      font-size: 16px;
-    }
-
-    #dashboard {
-      display: none;
-      text-align: center;
-    }
-
-    #message {
-      text-align: center;
-      margin-top: 15px;
-    }
-  </style>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#07101f;
+ color:white;
+}
+header{
+ background:#0d1b2f;
+ padding:18px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+}
+.logo{font-size:24px;font-weight:bold}
+.user{font-size:13px;color:#9db0c8}
+.container{
+ max-width:700px;
+ margin:auto;
+ padding:20px;
+}
+.card{
+ background:#0d1b2f;
+ border:1px solid #203452;
+ border-radius:16px;
+ padding:20px;
+ margin-bottom:18px;
+}
+h1{margin-top:0}
+.stat{
+ display:flex;
+ justify-content:space-between;
+ padding:15px 0;
+ border-bottom:1px solid #203452;
+}
+button{
+ width:100%;
+ padding:14px;
+ border:0;
+ border-radius:10px;
+ background:#16a34a;
+ color:white;
+ font-size:16px;
+ font-weight:bold;
+ margin-top:12px;
+}
+button.logout{background:#26364d}
+input,select{
+ width:100%;
+ padding:13px;
+ margin-top:8px;
+ border-radius:9px;
+ border:1px solid #344b68;
+ background:#07101f;
+ color:white;
+}
+.hidden{display:none}
+.green{color:#22c55e}
+</style>
 </head>
 
 <body>
 
-<div class="box">
+<header>
+<div class="logo">TraderXBase</div>
+<div class="user" id="userEmail">Loading...</div>
+</header>
 
-  <div id="loginPage">
-    <h1>TraderXBase</h1>
+<div class="container">
 
-    <input id="email" type="email" placeholder="Email address">
+<div class="card">
+<h1>Trading Dashboard</h1>
+<p>Welcome to <b>TraderXBase</b>.</p>
+<p class="green">● Account connected</p>
+</div>
 
-    <input id="password" type="password" placeholder="Password">
+<div class="card">
+<h2>Account Overview</h2>
 
-    <button onclick="createAccount()">Create Account</button>
+<div class="stat">
+<span>Account Status</span>
+<b class="green">Active</b>
+</div>
 
-    <button onclick="login()">Login</button>
+<div class="stat">
+<span>Trading Mode</span>
+<b>Demo</b>
+</div>
 
-    <p id="message"></p>
-  </div>
+<div class="stat">
+<span>Bot Status</span>
+<b id="botStatus">Stopped</b>
+</div>
 
-  <div id="dashboard">
-    <h1>TraderXBase</h1>
-    <p>Welcome!</p>
-    <p id="userEmail"></p>
+</div>
 
-    <button onclick="logout()">Logout</button>
-  </div>
+<div class="card">
+<h2>Trading Bot</h2>
+
+<label>Trading Market</label>
+<select>
+<option>Volatility Index</option>
+<option>Forex</option>
+<option>Crypto</option>
+</select>
+
+<label>Stake Amount</label>
+<input type="number" placeholder="Enter amount">
+
+<label>Strategy</label>
+<select>
+<option>TraderXBase Strategy</option>
+<option>Conservative</option>
+<option>Aggressive</option>
+</select>
+
+<button onclick="startBot()">START BOT</button>
+<button class="logout" onclick="logout()">LOGOUT</button>
+</div>
+
+<div class="card">
+<h2>Bot Information</h2>
+<p>Trades: <b id="trades">0</b></p>
+<p>Profit/Loss: <b id="profit">0.00</b></p>
+</div>
 
 </div>
 
 <script>
-
-const SUPABASE_URL = "https://niiuquwoulqjncziayir.supabase.co";
-
-const SUPABASE_KEY = "sb_publishable_U_Mx6TQe-fKkfuqgGcYJKA_tWQUb1so";
-
-const client = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-
-async function createAccount() {
-
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const message = document.getElementById("message");
-
-  if (!email || !password) {
-    message.textContent = "Enter email and password.";
-    return;
-  }
-
-  const { error } = await client.auth.signUp({
-    email: email,
-    password: password
-  });
-
-  if (error) {
-    message.textContent = error.message;
-    return;
-  }
-
-  message.textContent =
-    "Account created. Check your email for verification.";
+function startBot(){
+ document.getElementById("botStatus").innerText="Running";
+ alert("TraderXBase demo bot started.");
 }
 
-
-async function login() {
-
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const message = document.getElementById("message");
-
-  const { data, error } =
-    await client.auth.signInWithPassword({
-      email: email,
-      password: password
-    });
-
-  if (error) {
-    message.textContent = error.message;
-    return;
-  }
-
-  showDashboard(data.user);
+function logout(){
+ alert("Logout function will be connected to Supabase in the next step.");
 }
-
-
-function showDashboard(user) {
-
-  document.getElementById("loginPage").style.display = "none";
-
-  document.getElementById("dashboard").style.display = "block";
-
-  document.getElementById("userEmail").textContent =
-    user.email;
-}
-
-
-async function logout() {
-
-  await client.auth.signOut();
-
-  document.getElementById("dashboard").style.display = "none";
-
-  document.getElementById("loginPage").style.display = "block";
-}
-
-
-async function checkLogin() {
-
-  const { data } = await client.auth.getSession();
-
-  if (data.session) {
-    showDashboard(data.session.user);
-  }
-}
-
-checkLogin();
-
 </script>
 
 </body>
